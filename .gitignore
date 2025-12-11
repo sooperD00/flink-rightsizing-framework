@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# K8s / Helm
+*.kubeconfig
+charts/
+
+# Outputs (keep examples only)
+*.json
+!examples/*.json
+
+# GCP
+credentials.json
+*.tfstate
+*.tfstate.*
+
+# Nexmark (if you build locally)
+nexmark/target/
