@@ -22,3 +22,6 @@ credentials.json
 
 # Nexmark (if you build locally)
 nexmark/target/
+
+# Txt Notes (vs .md official)
+docs/*.txt
