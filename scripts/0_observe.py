@@ -119,7 +119,7 @@ def collect_snapshot(client: FlinkClient) -> dict:
         if latest.get("completed"):
             lc = latest["completed"]
             checkpoint.update({
-                "latest_duration_ms": lc["duration"],
+                "latest_duration_ms": lc["end_to_end_duration"],
                 "latest_state_size_bytes": lc["state_size"],
                 "latest_state_size_mb": round(lc["state_size"] / (1024 * 1024), 2),
             })
@@ -127,7 +127,7 @@ def collect_snapshot(client: FlinkClient) -> dict:
         # Trend from history
         completed_history = [h for h in history if h.get("status") == "COMPLETED"]
         if completed_history:
-            durations = [h["duration"] for h in completed_history]
+            durations = [h["end_to_end_duration"] for h in completed_history]
             sizes = [h["state_size"] for h in completed_history]
             checkpoint.update({
                 "avg_duration_ms": round(sum(durations) / len(durations), 1),
