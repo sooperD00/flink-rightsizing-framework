@@ -96,23 +96,23 @@ flink-rightsizing-framework/
 ├── README.md
 ├── requirements.txt
 ├── docs/
-│   ├── THEORY.md                 # Factory analogy, why DoE works here
-│   ├── DASHBOARDS.md             # ASCII mockups for analytics teams
-│   ├── WINDOWS_SETUP.md          # Local dev setup for Windows
-│   └── IMPLEMENTATION_CHECKLIST.md
+│   ├── THEORY.md             # Why this works (the thinking)
+│   ├── DASHBOARDS.md         # What to build (specs for analytics team)  
+│   ├── IMPLEMENTATION.md     # How to execute (timeline, checklist)
+│   └── WINDOWS_SETUP.md      # Local dev setup
 ├── scripts/
-│   ├── flink_client.py           # Flink REST API wrapper
-│   ├── 0_observe.py              # Collect metrics → data/staging/
-│   ├── 1_identify.py             # Classify state → data/marts/
-│   ├── 2_experiment.py           # DoE parameter sweeps
-│   ├── 3_phase_in.py             # Incremental rollout logic
-│   └── 4_sustain.py              # Continuous monitoring
+│   ├── flink_client.py       # Flink REST API wrapper
+│   ├── 0_observe.py          # Collect metrics → data/staging/
+│   ├── 1_identify.py         # Classify state → data/marts/
+│   ├── 2_experiment.py       # DoE parameter sweeps
+│   ├── 3_phase_in.py         # Incremental rollout logic
+│   └── 4_sustain.py          # Continuous monitoring
 ├── setup/
-│   └── local_cluster.sh          # Spin up local Flink-on-K8s for testing
+│   └── local_cluster.sh      # Spin up local Flink-on-K8s for testing
 ├── data/
-│   ├── staging/                  # Raw snapshots
-│   ├── intermediate/             # Transformations
-│   └── marts/                    # Dashboard-ready aggregates
+│   ├── staging/              # Raw snapshots
+│   ├── intermediate/         # Transformations
+│   └── marts/                # Dashboard-ready aggregates
 └── examples/
     └── sample_snapshot.json
 ```
