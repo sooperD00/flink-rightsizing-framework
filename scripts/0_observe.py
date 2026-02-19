@@ -19,33 +19,47 @@ Usage:
     python 0_observe.py --endpoint http://flink-jm:8081
     python 0_observe.py --output data/staging/          # specify output dir
     python 0_observe.py --stdout                        # print to stdout instead
+
+# scripts/run_dev.sh
+python 0_observe.py --endpoint http://localhost:8081 --output data/staging/
+
+# scripts/run_prod.sh
+python 0_observe.py --endpoint http://flink-prod.internal:8081 --output /data/prod/staging/
+
+# crontab: every 5 minutes
+*/5 * * * * /opt/flink-rightsizing/scripts/run_prod.sh && python 1_identify.py
+
 """
 
-import argparse
+import argparse  # so you can run from setup/script.sh with different options
 import json
 import os
 import sys
 from datetime import datetime
 from pathlib import Path
 
-from flink_client import FlinkClient
+from flink_client import FlinkClient  # our wrapper for Flink REST API
 
 
 def collect_snapshot(client: FlinkClient) -> dict:
     """
-    Collect all observability metrics in one pass.
+    Collect rightsizing observability metrics from Flink REST API in one pass.
     
-    Returns a complete snapshot of cluster state.
+    Return a complete snapshot of cluster state for the 5 rightsizing metrics defined in `flink_client.py`
     """
     timestamp = datetime.now().isoformat()
     
     # =========================================================================
-    # Cluster overview
+    # 1. Cluster overview - flink_client.py says "slots" are checked here...
     # =========================================================================
     cluster = client.get_cluster_overview()
     
+    # =================
+    # 2. No "Jobs" metrics? only a by-grouping?
+    # =================
+
     # =========================================================================
-    # TaskManager metrics (CPU, heap, slots)
+    # 3. TaskManager metrics (CPU, heap, slots) - but you are checking slots here?
     # =========================================================================
     taskmanagers = []
     for tm in client.get_taskmanagers():
@@ -80,16 +94,20 @@ def collect_snapshot(client: FlinkClient) -> dict:
         })
     
     # =========================================================================
-    # Per-job metrics (backpressure, checkpoints, operators)
+    # 4-5. Per-job metrics (backpressure, checkpoints, operators)
+    # hmmmm, does this .py script sections not map 100% cleanly to our "5 metric areas"?
     # =========================================================================
     jobs = []
     for job in client.get_running_jobs():
         job_id = job["jid"]
         job_name = job["name"]
         
-        # Get operators (vertices)
+        # Get operators (vertices) - another GROUP BY field?
         vertices = client.get_job_vertices(job_id)
         
+        # =================
+        # 4. Backpressure
+        # =================
         # Backpressure per operator (this is your "operator-level bottlenecks")
         operators = []
         for vertex in vertices:
@@ -103,6 +121,9 @@ def collect_snapshot(client: FlinkClient) -> dict:
                 "backpressure_ratio": bp.get("ratio", None),  # if available
             })
         
+        # =================
+        # 5. Checkpoint
+        # =================
         # Checkpoint stats
         ckpt_raw = client.get_checkpoint_stats(job_id)
         counts = ckpt_raw.get("counts", {})

@@ -95,26 +95,52 @@ This is a work in progress. Following commits will show the build-out.
 flink-rightsizing-framework/
 ├── README.md
 ├── requirements.txt
+├── background/               # Research existing frameworks
 ├── docs/
 │   ├── THEORY.md             # Why this works (the thinking)
 │   ├── DASHBOARDS.md         # What to build (specs for analytics team)  
 │   ├── IMPLEMENTATION.md     # How to execute (timeline, checklist)
-│   └── WINDOWS_SETUP.md      # Local dev setup
+│   └── WINDOWS_SETUP.md     # Local dev setup
 ├── scripts/
-│   ├── flink_client.py       # Flink REST API wrapper
+│   ├── flink_client.py       # How to talk to Flink (Flink REST API wrapper)
 │   ├── 0_observe.py          # Collect metrics → data/staging/
-│   ├── 1_identify.py         # Classify state → data/marts/
+│   ├── 1_identify.py         # Read from staging, correlate, classify → data/marts/
 │   ├── 2_experiment.py       # DoE parameter sweeps
 │   ├── 3_phase_in.py         # Incremental rollout logic
 │   └── 4_sustain.py          # Continuous monitoring
 ├── setup/
-│   └── local_cluster.sh      # Spin up local Flink-on-K8s for testing
+│   ├── local_cluster.sh      # Flink-on-K8s: start, forward, status, stop
+│   ├── run_observe.sh        # Wrapper for Phase 0 (one-shot or continuous)
+│   └── validate_env.sh       # Check prerequisites before you start
 ├── data/
 │   ├── staging/              # Raw snapshots
 │   ├── intermediate/         # Transformations
 │   └── marts/                # Dashboard-ready aggregates
 └── examples/
     └── sample_snapshot.json
+```
+
+---
+
+## Getting Started
+```bash
+# 1. Check your environment
+./setup/validate_env.sh
+
+# 2. Start local Flink cluster
+./setup/local_cluster.sh
+
+# 3. In another terminal, port-forward
+./setup/local_cluster.sh forward
+
+# 4. Test connection
+python scripts/flink_client.py
+
+# 5. Collect your first snapshot
+./setup/run_observe.sh
+
+# 6. See what you got
+cat data/staging/snapshot_latest.json | head -50
 ```
 
 ---
@@ -132,15 +158,11 @@ This framework applies that methodology to streaming infrastructure:
 
 ---
 
-## Collaborate
+## Contributing
 
-I'm building this in public and looking for:
+Contributions welcome — issues, PRs, or "this assumption is wrong" feedback.
 
-- **Benchmarking partners** — If you're running Flink on K8s (GKE/EKS/AKS) and willing to test the framework on real workloads, I'd like to compare notes. No cost, just data sharing.
-- **Co-authors** — The goal is a publishable paper comparing DoE-based tuning against Flink's built-in autoscaler. If you have relevant experience or want to contribute test cases, let's talk.
-- **Feedback** — Issues, PRs, or just "this assumption is wrong" — all welcome.
-
-The roadmap: validated framework → benchmarks → paper → then consulting for teams who want help implementing it.
+If you're running Flink on K8s and want to test the framework against real workloads, I'd be interested in comparing results. The long-term goal is a publishable comparison of DoE-based tuning against Flink's built-in autoscaler.
 
 ---
 

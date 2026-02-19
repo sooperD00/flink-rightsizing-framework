@@ -8,12 +8,12 @@ Target: 6 weeks to publishable results
 
 **Goal:** Working local Flink cluster, observation scripts tested against real data.
 
-- [ ] Install Docker Desktop, enable Kubernetes
-- [ ] Install helm, kubectl
-- [ ] Run `setup/local_cluster.sh` — Flink operator + example job
-- [ ] Test `flink_client.py` connects to local cluster
-- [ ] Run `0_observe.py`, verify JSON output in `data/staging/`
-- [ ] Commit: "feat: Phase 0 observe working locally"
+- [x] Install Docker Desktop, enable Kubernetes
+- [x] Install helm, kubectl
+- [x] Run `setup/local_cluster.sh` — Flink operator + example job
+- [x] Test `flink_client.py` connects to local cluster
+- [x] Run `0_observe.py`, verify JSON output in `data/staging/`
+- [x] Commit: "feat: Phase 0 observe working locally"
 
 **Exit criteria:** `snapshot_latest.json` contains backpressure, utilization, and checkpoint data.
 
@@ -87,19 +87,17 @@ Target: 6 weeks to publishable results
 - [ ] Draft paper outline (Introduction, Methodology, Results, Discussion)
 - [ ] Write first draft of paper (target: ~4-6 pages)
 - [ ] Publish results to repo (charts, raw data, analysis notebooks)
-- [ ] Post to Reddit/HN/Flink community for feedback
 - [ ] Commit: "docs: benchmark results and paper draft"
 
-**Exit criteria:** Public repo with real results, paper draft ready for co-author review.
+**Exit criteria:** Public repo with real results, paper draft ready for review.
 
 ---
 
 ## After Week 6
 
 - [ ] Incorporate feedback from community/collaborators
-- [ ] Refine paper for submission (IEEE? VLDB? blog post first?)
-- [ ] Phase 3 + 4 scripts (phase-in, sustain) — as needed for consulting engagements
-- [ ] Identify pilot consulting clients from inbound interest
+- [ ] Refine paper for submission
+- [ ] Phase 3 + 4 scripts (phase-in, sustain)
 
 ---
 
@@ -130,48 +128,3 @@ Target: 6 weeks to publishable results
 | Nexmark doesn't expose the problem | Also test on synthetic "spiky load" patterns |
 | Autoscaler outperforms DoE | That's a valid result — publish it honestly |
 | Week slippage | Phases 3-4 scripts are optional for paper; can defer |
-
----
-
-## Social Media
-
-Build in public. Each post is a milestone, not a sales pitch.
-
-| Platform | Use For | Timing |
-|----------|---------|--------|
-| **Reddit** (r/dataengineering, r/apacheflink, r/devops) | Primary audience. Share progress, ask questions, help others. | Already have account (sooperD00). Post when scripts work, again when benchmarks run. |
-| **Hacker News** | "Show HN" when there's something real to show. | Wait until Week 4+ (GKE results). HN is brutal on vaporware. |
-| **LinkedIn** | Different audience — managers, decision-makers. Journey posts. | Cross-post milestones. |
-| **dbt Slack** | Mention in relevant channels, connect with data eng community. | Opportunistic — when Flink topics come up. |
-| **Data Engineering Slack** | Same as above, more Flink-specific folks. | Same. |
-
-**Skip for now:** Upwork/Toptal (job boards, not communities), Locally Optimistic (invite-gated), Flink Zulip (tiny).
-
-**Posting cadence:**
-1. "I have an idea" (done — README exists)
-2. "I implemented the scripts" (Week 1-2)
-3. "I spun up K8s and ran it" (Week 4)
-4. "Here's what happened: DoE vs autoscaler" (Week 5-6)
-5. Invite collaboration at each step
-
-Don't post marketing copy. Show work. Let people come to you.
-
----
-
-## Paper
-
-**Target venues (in order of fit):**
-
-| Venue | Type | Why |
-|-------|------|-----|
-| **ACM/SPEC ICPE** (Int'l Conf on Performance Engineering) | Conference | Performance optimization focus. Multiple Flink autoscaling papers here. Good fit for DoE angle. |
-| **ACM DEBS** (Distributed and Event-based Systems) | Conference | Stream processing specific. Right audience. |
-| **IEEE IPDPS** (Int'l Parallel and Distributed Processing Symposium) | Conference | Where AuTraScale was published. Solid venue. |
-| **IEEE TPDS** (Trans. on Parallel and Distributed Systems) | Journal | Where GML (ML-based Flink tuning) was published. Reach goal — high bar. |
-| **Cluster Computing** (Springer) | Journal | Lower bar, still credible. Recent Flink DQN paper landed here. |
-
-**Recommendation:** Target **ICPE** or **DEBS** first. Conference route is faster (months vs. 6-18 month journal cycle), builds credibility sooner, and the performance engineering framing fits your angle.
-
-**Co-author question:** Sole author is fine for a methods paper with real benchmarks. But a co-author with Flink production experience or academic affiliation strengthens it. (Jimmy? Benchmarking partner? Someone from Reddit who contributes test cases?)
-
-**Timeline:** Draft by Week 6, submit after community feedback.

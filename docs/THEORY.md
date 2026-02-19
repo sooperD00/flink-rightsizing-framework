@@ -71,71 +71,21 @@ This is expensive guessing. You might get lucky. You might break production. You
 4. **Find the knee in the curve** — Where does reducing resources start causing backpressure?
 5. **Back off to safe margin** — Don't run at the edge.
 
-This is how:
-- Pharmaceutical companies get drugs through FDA approval
-- Semiconductor fabs optimize recipes for new process nodes
-- Netflix runs A/B tests on infrastructure changes
-- NASA qualifies systems for mission-critical use
-
-It's not new. It's just rigorous. And it works better than guessing.
+This is how pharmaceutical companies get drugs through FDA approval, how semiconductor fabs optimize recipes for new process nodes, and how Netflix runs A/B tests on infrastructure changes. It's not new. It's just rigorous. And it works better than guessing.
 
 ---
 
-## Understanding Down to the Electrons
+## Where the Money Burns
 
-To optimize a system, you need to understand where the work actually happens. Here's the physical reality behind Flink on Kubernetes on GCP:
+When you request 4 CPUs and 16GB RAM in Kubernetes, K8s reserves that capacity on a node. You pay for the reservation even if your job only uses 0.5 CPUs and 2GB. The gap between reserved and used is where the waste lives.
 
-### The Stack (Physical → Abstract)
+Three things make this worse in practice:
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  Your Flink Job (DAG of operators)                      │  ← You write this
-├─────────────────────────────────────────────────────────┤
-│  Flink Runtime (JobManager + TaskManagers)              │  ← JVM processes
-├─────────────────────────────────────────────────────────┤
-│  Kubernetes (pods, resource scheduling)                 │  ← Container orchestration
-├─────────────────────────────────────────────────────────┤
-│  GCP Compute Engine (VMs)                               │  ← Virtual machines
-├─────────────────────────────────────────────────────────┤
-│  Hypervisor                                             │  ← Carves silicon into VMs
-├─────────────────────────────────────────────────────────┤
-│  Physical Servers                                       │  ← Intel Xeon / AMD EPYC
-│  (CPU, RAM, NVMe, 25-100Gbps networking)               │
-├─────────────────────────────────────────────────────────┤
-│  Datacenter (The Dalles, OR? Council Bluffs, IA?)       │  ← Actual building
-└─────────────────────────────────────────────────────────┘
-```
-
-### Where the Money Burns
-
-**Kubernetes reserves, not uses.** When you request 4 CPUs and 16GB RAM, K8s reserves that capacity on a node. You pay for the reservation even if your job only uses 0.5 CPUs and 2GB. The billing meter starts when you reserve.
-
-**Flink defaults are conservative.** Out-of-box settings assume you'd rather overpay than risk OOM. This is fine for getting started, but expensive at scale.
+**Flink defaults are conservative.** Out-of-box settings assume you'd rather overpay than risk OOM. Fine for getting started, expensive at scale.
 
 **Linear scaling is wrong.** "2x data → 2x parallelism" spins up 2x TaskManager pods. Stream processing often needs only 1.3x for 2x data because of batching, buffering, and parallelization efficiency.
 
-### Where the Work Happens
-
-**Data arrives:** Bytes come in over the network (Kafka, Pub/Sub). Electrical signals hit a NIC, get DMA'd into RAM.
-
-**Data is processed:** CPU cores run JVM bytecode. Actual ALU operations, cache hits/misses, branch predictions. This is where parallelism matters — more cores = more concurrent processing, but only if there's work to do.
-
-**State is stored:** Flink keeps state (counters, windows, aggregations) in RAM. Periodically serialized to GCS for durability. This is checkpointing:
-- Pause logical time (barriers flow through the dataflow)
-- Serialize all state to bytes (CPU cycles, memory bandwidth)
-- Write bytes to GCS (network I/O, storage I/O, $$$ per byte)
-
-**Data is sent out:** Serialize results, send over network to the next system (database, another Kafka topic, API).
-
-### The Hidden Costs
-
-| Activity | What It Costs | Why It's Hidden |
-|----------|---------------|-----------------|
-| Checkpointing | CPU + network + GCS storage | Happens in background, not in "processing time" |
-| State growth | Checkpoint duration, memory pressure | Gradual until it breaks |
-| Serialization | CPU cycles | Buried in "processing" |
-| Network shuffle | Cross-node bandwidth | Only visible under load |
-| JVM GC | Latency spikes | Intermittent, hard to attribute |
+**Hidden overhead compounds.** Checkpointing (CPU + network + storage I/O), serialization, JVM GC pauses, and cross-node network shuffles all consume resources without showing up in "processing time." State growth is particularly insidious — checkpoint duration creeps up gradually until it breaks.
 
 ---
 
