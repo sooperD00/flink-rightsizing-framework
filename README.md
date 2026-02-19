@@ -116,9 +116,7 @@ flink-rightsizing-framework/
 ├── data/
 │   ├── staging/              # Raw snapshots
 │   ├── intermediate/         # Transformations
-│   └── marts/                # Dashboard-ready aggregates
-└── examples/
-    └── sample_snapshot.json
+└── └── marts/                # Dashboard-ready aggregates
 ```
 
 ---
