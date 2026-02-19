@@ -23,7 +23,7 @@ Target: 6 weeks to publishable results
 
 **Goal:** Classification logic working, Nexmark benchmark deployed locally.
 
-- [x] Write `1_identify.py` — reads staging, outputs classification to `data/marts/`
+- [x] Write `1_classify.py` — reads staging, outputs classification to `data/marts/`
 - [x] Decision rules: overprovisioned / CPU-bound / memory-starved / checkpoint-thrash / sink-blocked
 - [ ] Deploy Nexmark benchmark suite locally (standard Flink streaming benchmark)
 - [ ] Collect baseline Nexmark metrics with default config
@@ -103,6 +103,7 @@ Target: 6 weeks to publishable results
 - [ ] Incorporate feedback from community/collaborators
 - [ ] Refine paper for submission
 - [ ] Phase 3 + 4 scripts (phase-in, sustain)
+	- [ ] Atomic writes (write-to-temp-then-rename) for `_latest.json` files — needed before continuous/cron mode
 
 ---
 

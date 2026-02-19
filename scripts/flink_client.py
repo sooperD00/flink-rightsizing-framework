@@ -302,7 +302,7 @@ class FlinkClient:
     #   Ue requires combining: utilization + backpressure + job state + input rate.
     #   That's a classification problem, not a data collection problem.
     #
-    # See 1_identify.py for:
+    # See 1_classify.py for:
     #   - Correlating signals across endpoints
     #   - Distinguishing "idle because overprovisioned" vs "idle because starved"
     #   - Outputting actionable classifications (overprovisioned / CPU-bound / etc.)

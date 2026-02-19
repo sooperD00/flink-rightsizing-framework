@@ -79,7 +79,7 @@ The goal isn't to solve this once — it's to have a system that keeps the cost/
 
 - [x] Repo scaffolded, README drafted
 - [x] Phase 0 observation scripts (`flink_client.py`, `0_observe.py`)
-- [ ] Phase 1 identification logic
+- [x] Phase 1 identification logic
 - [ ] Phase 2 experiment framework
 - [ ] Local Flink cluster for testing
 - [ ] Nexmark benchmark baseline
@@ -100,17 +100,18 @@ flink-rightsizing-framework/
 │   ├── THEORY.md             # Why this works (the thinking)
 │   ├── DASHBOARDS.md         # What to build (specs for analytics team)  
 │   ├── IMPLEMENTATION.md     # How to execute (timeline, checklist)
-│   └── WINDOWS_SETUP.md     # Local dev setup
+│   └── WINDOWS_SETUP.md      # Local dev setup
 ├── scripts/
 │   ├── flink_client.py       # How to talk to Flink (Flink REST API wrapper)
 │   ├── 0_observe.py          # Collect metrics → data/staging/
-│   ├── 1_identify.py         # Read from staging, correlate, classify → data/marts/
+│   ├── 1_classify.py         # Read from staging, correlate, classify → data/marts/
 │   ├── 2_experiment.py       # DoE parameter sweeps
 │   ├── 3_phase_in.py         # Incremental rollout logic
 │   └── 4_sustain.py          # Continuous monitoring
-├── setup/
+├── bin/
 │   ├── local_cluster.sh      # Flink-on-K8s: start, forward, status, stop
 │   ├── run_observe.sh        # Wrapper for Phase 0 (one-shot or continuous)
+│   ├── run_classify.sh       # Process prev-phase json (classify latest snapshot) → data/marts/
 │   └── validate_env.sh       # Check prerequisites before you start
 ├── data/
 │   ├── staging/              # Raw snapshots

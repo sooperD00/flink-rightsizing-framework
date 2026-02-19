@@ -27,7 +27,7 @@ python 0_observe.py --endpoint http://localhost:8081 --output data/staging/
 python 0_observe.py --endpoint http://flink-prod.internal:8081 --output /data/prod/staging/
 
 # crontab: every 5 minutes
-*/5 * * * * /opt/flink-rightsizing/scripts/run_prod.sh && python 1_identify.py
+*/5 * * * * /opt/flink-rightsizing/scripts/run_prod.sh && python 1_classify.py
 
 """
 

@@ -12,7 +12,7 @@ Data source: `data/marts/` (output from the framework scripts)
 
 **Refresh:** Every 5 minutes
 
-**Data source:** `0_observe.py` → `data/staging/` → `1_identify.py` → `data/marts/backpressure_status.json`
+**Data source:** `0_observe.py` → `data/staging/` → `1_classify.py` → `data/marts/backpressure_status.json`
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
@@ -197,7 +197,7 @@ Data source: `data/marts/` (output from the framework scripts)
 
 **Refresh:** Daily (recommendations don't need real-time)
 
-**Data source:** `1_identify.py` → `data/marts/reduction_candidates.json`
+**Data source:** `1_classify.py` → `data/marts/reduction_candidates.json`
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
