@@ -23,8 +23,8 @@ Target: 6 weeks to publishable results
 
 **Goal:** Classification logic working, Nexmark benchmark deployed locally.
 
-- [ ] Write `1_identify.py` — reads staging, outputs classification to `data/marts/`
-- [ ] Decision rules: overprovisioned / CPU-bound / memory-starved / checkpoint-thrash / sink-blocked
+- [x] Write `1_identify.py` — reads staging, outputs classification to `data/marts/`
+- [x] Decision rules: overprovisioned / CPU-bound / memory-starved / checkpoint-thrash / sink-blocked
 - [ ] Deploy Nexmark benchmark suite locally (standard Flink streaming benchmark)
 - [ ] Collect baseline Nexmark metrics with default config
 - [ ] Commit: "feat: Phase 1 identify + Nexmark baseline"
@@ -38,6 +38,11 @@ Target: 6 weeks to publishable results
 **Goal:** DoE parameter sweep working on Nexmark workloads.
 
 - [ ] Write `2_experiment.py` — grid search over parallelism, memory, slots
+- [ ] Extract thresholds to `config/thresholds.yaml` — editable w/o touching logic
+- [ ] Define stage schemas (`schemas.py`)
+	- dataclasses for observe → identify → experiment contracts
+- [ ] `2_experiment.py` varies thresholds programmatically during sweeps
+	- (reads from config, not hardcoded)
 - [ ] Implement metrics collection per experiment run
 - [ ] Implement "find the floor" logic (backpressure threshold detection)
 - [ ] Run sweep on 2-3 Nexmark queries
