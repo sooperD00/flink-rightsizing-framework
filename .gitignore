@@ -24,4 +24,4 @@ credentials.json
 nexmark/target/
 
 # Txt Notes (vs .md official)
-docs/*.txt
+docs/*.txt.DS_Store
