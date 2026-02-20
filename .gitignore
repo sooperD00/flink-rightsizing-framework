@@ -12,7 +12,7 @@ venv/
 charts/
 
 # Outputs (keep examples only)
-*.json
+# *.json  # committing for portfolio
 !examples/*.json
 
 # GCP

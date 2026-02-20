@@ -10,10 +10,13 @@ Target: 6 weeks to publishable results
 
 - [x] Install Docker Desktop, enable Kubernetes
 - [x] Install helm, kubectl
-- [x] Run `setup/local_cluster.sh` — Flink operator + example job
+- [x] Run `bin/local_cluster.sh` — Flink operator + example job
 - [x] Test `flink_client.py` connects to local cluster
 - [x] Run `0_observe.py`, verify JSON output in `data/staging/`
+- [x] Run `1_classify.py`, verify classification output in `data/marts/`
 - [x] Commit: "feat: Phase 0 observe working locally"
+
+✅ Confirmed on macOS Sequoia 15.3.1 (Apple Silicon, Mac Mini) — 2026-02-19
 
 **Exit criteria:** `snapshot_latest.json` contains backpressure, utilization, and checkpoint data.
 
@@ -103,7 +106,19 @@ Target: 6 weeks to publishable results
 - [ ] Incorporate feedback from community/collaborators
 - [ ] Refine paper for submission
 - [ ] Phase 3 + 4 scripts (phase-in, sustain)
-	- [ ] Atomic writes (write-to-temp-then-rename) for `_latest.json` files — needed before continuous/cron mode
+
+---
+
+## Cleanup / Tech Debt
+
+Discovered during local setup (2026-02-19):
+
+- [x] Helm repo URL: Apache moves older releases from `downloads.apache.org` to `archive.apache.org`. Updated `local_cluster.sh` to use 1.13.0 archive URL. Add a note in setup docs that this URL will need updating when new operator versions ship.
+- [x] Service account + RBAC: The Flink operator doesn't create a `flink` service account in the test namespace. Added `kubectl create serviceaccount` + namespace-scoped role/rolebinding to `local_cluster.sh`.
+- [x] JobManager timeout bug: The wait loop in `deploy_example_job()` would print "deployed!" even if the JobManager never started. Added `JM_READY` flag with `exit 1` on timeout.
+- [x] Backpressure retry: The `/backpressure` REST endpoint returns 500 for ~30s on a fresh cluster. Added retry loop (3 attempts, 10s apart) in `0_observe.py` that degrades gracefully to `"unknown"` instead of crashing.
+- [ ] Atomic writes (write-to-temp-then-rename) for `_latest.json` files — needed before continuous/cron mode
+- [ ] `local_cluster.sh` header and docs updated for cross-platform (macOS + Windows)
 
 ---
 

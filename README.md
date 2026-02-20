@@ -79,9 +79,9 @@ The goal isn't to solve this once — it's to have a system that keeps the cost/
 
 - [x] Repo scaffolded, README drafted
 - [x] Phase 0 observation scripts (`flink_client.py`, `0_observe.py`)
-- [x] Phase 1 identification logic
+- [x] Phase 1 identification logic (`1_classify.py`)
+- [x] Local Flink cluster for testing (Docker Desktop + Kubernetes)
 - [ ] Phase 2 experiment framework
-- [ ] Local Flink cluster for testing
 - [ ] Nexmark benchmark baseline
 - [ ] Head-to-head: DoE framework vs. Flink autoscaler
 - [ ] Results published (charts, data, warts and all)
@@ -98,9 +98,10 @@ flink-rightsizing-framework/
 ├── background/               # Research existing frameworks
 ├── docs/
 │   ├── THEORY.md             # Why this works (the thinking)
-│   ├── DASHBOARDS.md         # What to build (specs for analytics team)  
+│   ├── DASHBOARDS.md         # What to build (specs for analytics team)
 │   ├── IMPLEMENTATION.md     # How to execute (timeline, checklist)
-│   └── WINDOWS_SETUP.md      # Local dev setup
+│   ├── WINDOWS_SETUP.md      # Local dev setup (Windows)
+│   └── MAC_SETUP.md          # Local dev setup (macOS)
 ├── scripts/
 │   ├── flink_client.py       # How to talk to Flink (Flink REST API wrapper)
 │   ├── 0_observe.py          # Collect metrics → data/staging/
@@ -122,24 +123,55 @@ flink-rightsizing-framework/
 ---
 
 ## Getting Started
+
+### 1. Platform Setup
+
+Follow the guide for your OS:
+- **macOS:** [docs/MAC_SETUP.md](docs/MAC_SETUP.md)
+- **Windows:** [docs/WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)
+
+### 2. Python Environment
+
 ```bash
-# 1. Check your environment
-./setup/validate_env.sh
+python3 -m venv .venv
+source .venv/bin/activate    # macOS/Linux
+# .venv\Scripts\activate     # Windows (Git Bash)
+pip install -r requirements.txt
+```
 
-# 2. Start local Flink cluster
-./setup/local_cluster.sh
+### 3. Run It
 
-# 3. In another terminal, port-forward
-./setup/local_cluster.sh forward
+```bash
+# Check your environment
+bash bin/validate_env.sh
 
-# 4. Test connection
-python scripts/flink_client.py
+# Start local Flink cluster (~3-5 min first time)
+bash bin/local_cluster.sh
 
-# 5. Collect your first snapshot
-./setup/run_observe.sh
+# In another terminal, port-forward
+bash bin/local_cluster.sh forward
 
-# 6. See what you got
+# In another terminal (activate venv first)
+source .venv/bin/activate
+
+# Test connection
+python3 scripts/flink_client.py
+
+# Collect your first snapshot
+bash bin/run_observe.sh
+
+# Classify it
+bash bin/run_classify.sh
+
+# See what you got
 cat data/staging/snapshot_latest.json | head -50
+cat data/marts/classification_latest.json | head -50
+```
+
+### 4. When Done
+
+```bash
+bash bin/local_cluster.sh teardown
 ```
 
 ---
@@ -167,7 +199,7 @@ If you're running Flink on K8s and want to test the framework against real workl
 
 ## About
 
-**Nicole Rowsey** — Staff Data Platform Engineer, PhD EE  
+**Nicole Rowsey** — Staff Data Platform Engineer, PhD EE
 13 years building distributed systems and data platforms at Intel. Now applying factory optimization methodology to cloud infrastructure.
 
 - **GitHub:** [@sooperD00](https://github.com/sooperD00)

@@ -35,6 +35,7 @@ import argparse  # so you can run from setup/script.sh with different options
 import json
 import os
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -111,7 +112,15 @@ def collect_snapshot(client: FlinkClient) -> dict:
         # Backpressure per operator (this is your "operator-level bottlenecks")
         operators = []
         for vertex in vertices:
-            bp = client.get_backpressure(job_id, vertex["id"])
+            # Backpressure endpoint returns 500 until metrics warm up (~30s)
+            bp = {}
+            for attempt in range(3):
+                try:
+                    bp = client.get_backpressure(job_id, vertex["id"])
+                    break
+                except Exception:
+                    if attempt < 2:
+                        time.sleep(10)
             operators.append({
                 "operator_name": vertex["name"],
                 "vertex_id": vertex["id"],

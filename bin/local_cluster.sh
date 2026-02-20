@@ -3,12 +3,16 @@
 # setup_local_cluster.sh
 # 
 # Sets up a local Flink-on-Kubernetes cluster for testing.
-# Designed for Windows 10 + Git Bash + Docker Desktop.
+# Tested on:
+#   - Windows 10 + Git Bash + Docker Desktop
+#   - macOS Sequoia 15.3.1 (Apple Silicon/arm64)
 #
 # Prerequisites (install these first):
-#   1. Docker Desktop for Windows (with Kubernetes enabled)
-#   2. kubectl (comes with Docker Desktop, or: choco install kubernetes-cli)
-#   3. helm (choco install kubernetes-helm, or: winget install Helm.Helm)
+#   1. Docker Desktop (with Kubernetes enabled)
+#   2. kubectl (comes with Docker Desktop)
+#   3. helm
+#      macOS:   brew install helm
+#      Windows: choco install kubernetes-helm  (or: winget install Helm.Helm)
 #
 # Usage:
 #   ./setup_local_cluster.sh          # full setup
@@ -100,11 +104,12 @@ install_flink_operator() {
     fi
     
     # Add helm repo
-    helm repo add flink-operator-repo https://downloads.apache.org/flink/flink-kubernetes-operator-1.10.0/ 2>/dev/null || true
+    helm repo add flink-operator-repo https://archive.apache.org/dist/flink/flink-kubernetes-operator-1.13.0/ 2>/dev/null || true
     helm repo update
     
     # Create namespace
     kubectl create namespace flink-operator 2>/dev/null || true
+    kubectl create serviceaccount flink -n flink-test 2>/dev/null || true
     
     # Install cert-manager (required by Flink operator)
     echo_step "Installing cert-manager (required dependency)..."
@@ -136,7 +141,16 @@ deploy_example_job() {
     
     # Create namespace for our test
     kubectl create namespace flink-test 2>/dev/null || true
-    
+    kubectl create serviceaccount flink -n flink-test 2>/dev/null || true
+
+    kubectl create role flink-role -n flink-test \
+        --verb=get,list,watch,create,delete,patch,update \
+        --resource=pods,services,configmaps,deployments,replicasets 2>/dev/null || true
+
+    kubectl create rolebinding flink-role-binding -n flink-test \
+        --role=flink-role \
+        --serviceaccount=flink-test:flink 2>/dev/null || true
+        
     # Check if already deployed
     if kubectl get flinkdeployment basic-example -n flink-test &> /dev/null; then
         echo "  Example job already deployed, skipping."
@@ -151,14 +165,23 @@ deploy_example_job() {
     sleep 10  # Give it a moment to create resources
     
     # Wait for JobManager pod
+    JM_READY=0
     for i in {1..30}; do
         if kubectl get pods -n flink-test -l component=jobmanager -o jsonpath='{.items[0].status.phase}' 2>/dev/null | grep -q Running; then
             echo "  ✓ JobManager is running"
+            JM_READY=1
             break
         fi
         echo "  Waiting for JobManager... ($i/30)"
         sleep 5
     done
+
+    if [ $JM_READY -eq 0 ]; then
+        echo_error "JobManager failed to start within timeout. Debug with:"
+        echo "  kubectl get pods -n flink-test"
+        echo "  kubectl describe flinkdeployment basic-example -n flink-test"
+        exit 1
+    fi
     
     echo_step "Example Flink job deployed!"
 }

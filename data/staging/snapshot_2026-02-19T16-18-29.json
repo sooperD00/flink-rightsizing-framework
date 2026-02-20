@@ -1,0 +1,67 @@
+{
+  "snapshot_timestamp": "2026-02-19T16:18:29.420686",
+  "endpoint": "http://localhost:8081",
+  "cluster": {
+    "taskmanager_count": 1,
+    "slots_total": 2,
+    "slots_available": 0,
+    "jobs_running": 1,
+    "jobs_finished": 0,
+    "jobs_failed": 0,
+    "flink_version": "1.20.3"
+  },
+  "taskmanagers": [
+    {
+      "taskmanager_id": "basic-example-taskmanager-1-1",
+      "taskmanager_id_short": "basic-ex",
+      "slots_total": 2,
+      "slots_used": 2,
+      "slots_free": 0,
+      "slot_utilization_pct": 100.0,
+      "cpu_load_pct": 17.5,
+      "heap_used_mb": 49.7,
+      "heap_max_mb": 643.8,
+      "heap_utilization_pct": 7.7,
+      "nonheap_used_mb": 85.5,
+      "nonheap_max_mb": 744.0
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "347e87dc9ed3a629eb83ed9de577e32f",
+      "job_name": "State machine job",
+      "state": "RUNNING",
+      "start_time": 1771546185277,
+      "operators": [
+        {
+          "operator_name": "Source: Events Generator Source",
+          "vertex_id": "bc764cd8ddf7a0cff126f51c16239658",
+          "parallelism": 2,
+          "status": "RUNNING",
+          "backpressure_level": "ok",
+          "backpressure_ratio": null
+        },
+        {
+          "operator_name": "Flat Map -> Sink: Print to Std. Out",
+          "vertex_id": "20ba6b65f97481d5570070de90e4e791",
+          "parallelism": 2,
+          "status": "RUNNING",
+          "backpressure_level": "ok",
+          "backpressure_ratio": null
+        }
+      ],
+      "checkpoint": {
+        "completed_count": 259,
+        "failed_count": 3,
+        "in_progress_count": 0,
+        "latest_duration_ms": 4,
+        "latest_state_size_bytes": 15575,
+        "latest_state_size_mb": 0.01,
+        "avg_duration_ms": 4.1,
+        "max_duration_ms": 5,
+        "avg_state_size_mb": 0.02,
+        "history_sample_count": 10
+      }
+    }
+  ]
+}

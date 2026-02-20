@@ -1,0 +1,97 @@
+{
+  "classification_timestamp": "2026-02-19T16:37:05.120252",
+  "snapshot_timestamp": "2026-02-19T16:37:01.293821",
+  "endpoint": "http://localhost:8081",
+  "summary": {
+    "priority": "cost_reduction",
+    "action": "Safe to experiment with reducing resources",
+    "tm_classifications": [
+      "overprovisioned"
+    ],
+    "job_classifications": [
+      "healthy"
+    ],
+    "tm_count": 1,
+    "job_count": 1
+  },
+  "taskmanagers": [
+    {
+      "taskmanager_id": "basic-example-taskmanager-1-1",
+      "taskmanager_id_short": "basic-ex",
+      "classifications": [
+        "overprovisioned"
+      ],
+      "evidence": {
+        "overprovisioned": {
+          "reason": "CPU and heap both below threshold",
+          "flags": {
+            "cpu_low": true,
+            "heap_low": true
+          },
+          "values": {
+            "cpu_pct": 17.3,
+            "heap_pct": 29.3,
+            "slot_pct": 100.0
+          }
+        }
+      },
+      "metrics": {
+        "cpu_load_pct": 17.3,
+        "heap_utilization_pct": 29.3,
+        "heap_used_mb": 188.9,
+        "heap_max_mb": 643.8,
+        "slot_utilization_pct": 100.0,
+        "slots_used": 2,
+        "slots_total": 2
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "347e87dc9ed3a629eb83ed9de577e32f",
+      "job_name": "State machine job",
+      "state": "RUNNING",
+      "classifications": [
+        "healthy"
+      ],
+      "evidence": {
+        "healthy": {
+          "reason": "No backpressure, checkpoints healthy",
+          "backpressure_levels": [
+            "ok",
+            "ok"
+          ],
+          "checkpoint_fail_rate": 0.004
+        }
+      },
+      "operators_summary": [
+        {
+          "name": "Source: Events Generator Source",
+          "parallelism": 2,
+          "backpressure": "ok"
+        },
+        {
+          "name": "Flat Map -> Sink: Print to Std. Out",
+          "parallelism": 2,
+          "backpressure": "ok"
+        }
+      ],
+      "checkpoint_summary": {
+        "completed": 815,
+        "failed": 3,
+        "avg_duration_ms": 2.8,
+        "avg_state_size_mb": 0.02
+      }
+    }
+  ],
+  "thresholds_used": {
+    "cpu_overprovisioned_below": 30,
+    "cpu_bound_above": 80,
+    "heap_overprovisioned_below": 40,
+    "heap_pressure_above": 80,
+    "checkpoint_fail_rate_above": 0.05,
+    "checkpoint_duration_warn_ms": 10000,
+    "checkpoint_min_sample": 20,
+    "slot_underutilized_below": 50
+  }
+}
